@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:3000
+
+### Create a valid opponent — expect 201
+POST {{baseUrl}}/api/opponents
+Content-Type: application/json
+
+{
+  "name": "  John Higgins  ",
+  "notes": "Club practice partner"
+}
+
+### Reject a blank name — expect 400
+POST {{baseUrl}}/api/opponents
+Content-Type: application/json
+
+{
+  "name": "   "
+}
+
+### Reject an unexpected field — expect 400
+POST {{baseUrl}}/api/opponents
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "rating": 5
+}

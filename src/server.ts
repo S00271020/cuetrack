@@ -24,6 +24,7 @@ app.get("/api/health", (_req, res) => {
 async function startServer(): Promise<void> {
   const mongoUri = process.env.MONGODB_URI;
 
+  // Check if the MongoDB URI is provided in the environment variables
   if (!mongoUri) {
     throw new Error("MONGODB_URI is missing from .env");
   }
@@ -38,11 +39,13 @@ async function startServer(): Promise<void> {
 
 // Start the server and handle any startup errors
 startServer().catch((error: unknown) => {
+  // Log the error details to the console for debugging purposes
   if (error instanceof Error) {
     console.error(`Server startup failed: ${error.name}: ${error.message}`);
   } else {
     console.error("Server startup failed with an unknown error.");
   }
 
+  // Exit the process with a non-zero status code to indicate failure
   process.exit(1);
 });
