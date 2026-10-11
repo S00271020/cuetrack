@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose";
 
+// Define the TypeScript interfaces for the Opponent model
 export interface Opponent {
   name: string;
   notes?: string;
 }
 
-// Define the Mongoose schema for the Opponent model
 const opponentSchema = new Schema<Opponent>(
   {
     name: {
@@ -26,5 +26,5 @@ const opponentSchema = new Schema<Opponent>(
   { timestamps: true },
 );
 
-// Create the Mongoose model for the Opponent schema
+// Create the Mongoose models for the Opponent and Match schemas
 export const OpponentModel = model<Opponent>("Opponent", opponentSchema);

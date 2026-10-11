@@ -31,7 +31,7 @@ Content-Type: application/json
 GET {{baseUrl}}/api/opponents
 
 ### Get an existing opponent — expect 200
-GET {{baseUrl}}/api/opponents/6ac96d8e163d93e8653e15ab
+GET {{baseUrl}}/api/opponents/{{opponentId}}
 
 ### Get a nonexistent opponent — expect 404
 GET {{baseUrl}}/api/opponents/000000000000000000000000
