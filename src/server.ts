@@ -2,6 +2,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import express from "express";
 import { opponentsRouter } from "./routes/opponent.js";
+import { matchesRouter } from "./routes/match.js";
 
 // Create an Express application
 const app = express();
@@ -9,8 +10,9 @@ const port = Number(process.env.PORT ?? 3000);
 
 app.use(express.json());
 
-// Use the opponents router for handling opponent-related API routes
+// Mount the opponents and matches routers to handle API requests
 app.use("/api/opponents", opponentsRouter);
+app.use("/api/matches", matchesRouter);
 
 // Health check endpoint
 app.get("/api/health", (_req, res) => {

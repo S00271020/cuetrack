@@ -1,0 +1,103 @@
+@baseUrl = http://localhost:3000
+@opponentId = 6acbcdc204bdc52587e4e638
+
+@matchId = 6acbca368eb30dd89ec29381
+
+### Create a match — expect 201
+POST {{baseUrl}}/api/matches
+Content-Type: application/json
+
+{
+  "opponentId": "{{opponentId}}",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 65, "opponentScore": 32 },
+    { "playerScore": 21, "opponentScore": 74 },
+    { "playerScore": 58, "opponentScore": 40 }
+  ],
+  "highestBreak": 42
+}
+
+### Reject tied frame points — expect 400
+POST {{baseUrl}}/api/matches
+Content-Type: application/json
+
+{
+  "opponentId": "{{opponentId}}",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 40, "opponentScore": 40 }
+  ],
+  "highestBreak": 20
+}
+
+### Reject a nonexistent opponent — expect 404
+POST {{baseUrl}}/api/matches
+Content-Type: application/json
+
+{
+  "opponentId": "000000000000000000000000",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 65, "opponentScore": 32 }
+  ],
+  "highestBreak": 42
+}
+
+### Get matches with opponent names — expect 200
+GET {{baseUrl}}/api/matches
+
+### Get an existing match — expect 200
+GET {{baseUrl}}/api/matches/{{matchId}}
+
+### Get a missing match — expect 404
+GET {{baseUrl}}/api/matches/000000000000000000000000
+
+### Reject an invalid match ID — expect 400
+GET {{baseUrl}}/api/matches/not-an-id
+
+### Update a match — expect 200
+PUT {{baseUrl}}/api/matches/{{matchId}}
+Content-Type: application/json
+
+{
+  "opponentId": "{{opponentId}}",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 80, "opponentScore": 32 }
+  ],
+  "highestBreak": 50,
+  "notes": "Corrected score"
+}
+
+### Reject an impossible highest break — expect 400
+PUT {{baseUrl}}/api/matches/{{matchId}}
+Content-Type: application/json
+
+{
+  "opponentId": "{{opponentId}}",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 30, "opponentScore": 70 }
+  ],
+  "highestBreak": 50
+}
+
+### Update a missing match — expect 404
+PUT {{baseUrl}}/api/matches/000000000000000000000000
+Content-Type: application/json
+
+{
+  "opponentId": "{{opponentId}}",
+  "playedAt": "2026-10-11T14:00:00Z",
+  "frames": [
+    { "playerScore": 80, "opponentScore": 32 }
+  ],
+  "highestBreak": 50
+}
+
+### Delete a match — expect 204
+DELETE {{baseUrl}}/api/matches/{{matchId}}
+
+### Delete it again — expect 404
+DELETE {{baseUrl}}/api/matches/{{matchId}}

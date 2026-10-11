@@ -2,6 +2,7 @@ import { Router } from "express";
 import { OpponentModel } from "../models/opponent.js";
 import { opponentInputSchema } from "../validation/opponent.js";
 import { isObjectIdOrHexString } from "mongoose";
+import { MatchModel } from "../models/match.js";
 
 export const opponentsRouter = Router();
 
@@ -109,9 +110,19 @@ opponentsRouter.put("/:id", async (req, res, next) => {
 // Delete an opponent by ID
 opponentsRouter.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
+  const linkedMatch = await MatchModel.exists({
+    opponentId: id,
+  });
 
   if (!isObjectIdOrHexString(id)) {
     res.status(400).json({ message: "Invalid opponent ID" });
+    return;
+  }
+
+  if (linkedMatch) {
+    res.status(409).json({
+      message: "Cannot delete an opponent who has recorded matches",
+    });
     return;
   }
 

@@ -15,20 +15,25 @@ export interface Match {
 }
 
 // Define the Mongoose schemas
-const frameSchema = new Schema<Frame>({
-  playerScore: {
-    type: Number,
-    required: true,
-    min: 0,
-    validate: Number.isInteger,
+const frameSchema = new Schema<Frame>(
+  {
+    playerScore: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: Number.isInteger,
+    },
+
+    opponentScore: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: Number.isInteger,
+    },
   },
-  opponentScore: {
-    type: Number,
-    required: true,
-    min: 0,
-    validate: Number.isInteger,
-  },
-});
+
+  { _id: false },
+);
 
 const matchSchema = new Schema<Match>(
   {

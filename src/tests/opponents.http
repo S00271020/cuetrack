@@ -1,12 +1,12 @@
 @baseUrl = http://localhost:3000
-@opponentId = 6ac96d8e163d93e8653e15ab
+@opponentId = 6acbcdc204bdc52587e4e638
 
 ### Create a valid opponent — expect 201
 POST {{baseUrl}}/api/opponents
 Content-Type: application/json
 
 {
-  "name": "  Ronnie O'Sullivan  ",
+  "name": "  Mark Selby  ",
   "notes": "Club practice partner"
 }
 
@@ -68,4 +68,7 @@ Content-Type: application/json
 DELETE {{baseUrl}}/api/opponents/{{opponentId}}
 
 ### Delete the same opponent again — expect 404
+DELETE {{baseUrl}}/api/opponents/{{opponentId}}
+
+### Reject deletion of an opponent with matches — expect 409
 DELETE {{baseUrl}}/api/opponents/{{opponentId}}
