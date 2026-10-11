@@ -72,3 +72,17 @@ DELETE {{baseUrl}}/api/opponents/{{opponentId}}
 
 ### Reject deletion of an opponent with matches — expect 409
 DELETE {{baseUrl}}/api/opponents/{{opponentId}}
+
+### Unknown endpoint — expect 404 with JSON
+GET {{baseUrl}}/api/does-not-exist
+
+### Malformed JSON — expect 400 with JSON
+POST {{baseUrl}}/api/opponents
+Content-Type: application/json
+
+{
+  "name":
+}
+
+### Reject an invalid opponent ID on deletion — expect 400
+DELETE {{baseUrl}}/api/opponents/not-an-id

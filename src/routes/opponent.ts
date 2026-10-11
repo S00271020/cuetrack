@@ -110,23 +110,25 @@ opponentsRouter.put("/:id", async (req, res, next) => {
 // Delete an opponent by ID
 opponentsRouter.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
-  const linkedMatch = await MatchModel.exists({
-    opponentId: id,
-  });
 
+  // Validate before using the ID in a database query.
   if (!isObjectIdOrHexString(id)) {
     res.status(400).json({ message: "Invalid opponent ID" });
     return;
   }
 
-  if (linkedMatch) {
-    res.status(409).json({
-      message: "Cannot delete an opponent who has recorded matches",
-    });
-    return;
-  }
-
   try {
+    const linkedMatch = await MatchModel.exists({
+      opponentId: id,
+    });
+
+    if (linkedMatch) {
+      res.status(409).json({
+        message: "Cannot delete an opponent who has recorded matches",
+      });
+      return;
+    }
+
     const opponent = await OpponentModel.findByIdAndDelete(id);
 
     if (!opponent) {

@@ -1,32 +1,12 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import express from "express";
-import { opponentsRouter } from "./routes/opponent.js";
-import { matchesRouter } from "./routes/match.js";
+import { app } from "./app.js";
 
-// Create an Express application
-const app = express();
 const port = Number(process.env.PORT ?? 3000);
 
-app.use(express.json());
-
-// Mount the opponents and matches routers to handle API requests
-app.use("/api/opponents", opponentsRouter);
-app.use("/api/matches", matchesRouter);
-
-// Health check endpoint
-app.get("/api/health", (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    application: "CueTrack API",
-  });
-});
-
-// Start the server and connect to MongoDB
 async function startServer(): Promise<void> {
   const mongoUri = process.env.MONGODB_URI;
 
-  // Check if the MongoDB URI is provided in the environment variables
   if (!mongoUri) {
     throw new Error("MONGODB_URI is missing from .env");
   }
@@ -39,15 +19,12 @@ async function startServer(): Promise<void> {
   });
 }
 
-// Start the server and handle any startup errors
 startServer().catch((error: unknown) => {
-  // Log the error details to the console for debugging purposes
   if (error instanceof Error) {
     console.error(`Server startup failed: ${error.name}: ${error.message}`);
   } else {
     console.error("Server startup failed with an unknown error.");
   }
 
-  // Exit the process with a non-zero status code to indicate failure
   process.exit(1);
 });
