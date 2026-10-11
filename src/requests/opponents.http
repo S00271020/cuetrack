@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000
-@opponentId = 6acbcdc204bdc52587e4e638
+@opponentId = 6acc07883cc883a1e1a8b47c
 
 ### Create a valid opponent — expect 201
 POST {{baseUrl}}/api/opponents
@@ -23,7 +23,7 @@ POST {{baseUrl}}/api/opponents
 Content-Type: application/json
 
 {
-  "name": "John Smith",
+  "name": "John Higgins",
   "rating": 5
 }
 
@@ -44,7 +44,7 @@ PUT {{baseUrl}}/api/opponents/{{opponentId}}
 Content-Type: application/json
 
 {
-  "name": "John Smith Updated",
+  "name": "Mark Selby Updated",
   "notes": "Updated notes"
 }
 
@@ -71,7 +71,7 @@ DELETE {{baseUrl}}/api/opponents/{{opponentId}}
 DELETE {{baseUrl}}/api/opponents/{{opponentId}}
 
 ### Reject deletion of an opponent with matches — expect 409
-DELETE {{baseUrl}}/api/opponents/{{opponentId}}
+DELETE {{baseUrl}}/api/opponents/6acc04923cc883a1e1a8b47a
 
 ### Unknown endpoint — expect 404 with JSON
 GET {{baseUrl}}/api/does-not-exist

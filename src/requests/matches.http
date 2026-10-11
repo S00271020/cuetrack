@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:3000
-@opponentId = 6acbcdc204bdc52587e4e638
+@opponentId = 6acc04923cc883a1e1a8b47a
 
-@matchId = 6acbca368eb30dd89ec29381
+@matchId = 6acc04bc3cc883a1e1a8b47b
 
 ### Create a match — expect 201
 POST {{baseUrl}}/api/matches
