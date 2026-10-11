@@ -2,12 +2,22 @@ import express from "express";
 import type { ErrorRequestHandler } from "express";
 import { opponentsRouter } from "./routes/opponent.js";
 import { matchesRouter } from "./routes/match.js";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yaml";
+import { readFileSync } from "node:fs";
 
 // Set up the Express app
 export const app = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Load the OpenAPI specification from the YAML file
+const openApiDocument = YAML.parse(
+  readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
+);
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Mount the routers for opponents and matches
 app.use("/api/opponents", opponentsRouter);

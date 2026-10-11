@@ -1,0 +1,423 @@
+openapi: 3.0.3
+
+info:
+  title: CueTrack API
+  version: 1.0.0
+  description: |
+    Records snooker opponents and completed matches.
+    Matches reference existing opponents and contain individual frame points.
+    Authentication and practice tracking are planned for later versions.
+    PUT replaces all editable fields; omitted notes are removed.
+    Unknown request fields are rejected.
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Health
+  - name: Opponents
+  - name: Matches
+
+paths:
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Check that the API is running
+      responses:
+        "200":
+          description: API is running; this is not a database readiness check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  application:
+                    type: string
+                    example: CueTrack API
+
+  /api/opponents:
+    get:
+      tags: [Opponents]
+      summary: List opponents
+      description: Returns opponents sorted by name ascending.
+      responses:
+        "200":
+          description: Opponent list, possibly empty
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Opponent"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Opponents]
+      summary: Create an opponent
+      requestBody:
+        $ref: "#/components/requestBodies/OpponentInput"
+      responses:
+        "201":
+          description: Opponent created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Opponent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/opponents/{id}:
+    parameters:
+      - $ref: "#/components/parameters/ResourceId"
+    get:
+      tags: [Opponents]
+      summary: Get an opponent by ID
+      responses:
+        "200":
+          description: Opponent found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Opponent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    put:
+      tags: [Opponents]
+      summary: Replace an opponent's editable fields
+      requestBody:
+        $ref: "#/components/requestBodies/OpponentInput"
+      responses:
+        "200":
+          description: Opponent updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Opponent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      tags: [Opponents]
+      summary: Delete an opponent
+      description: Opponents referenced by matches cannot be deleted.
+      responses:
+        "204":
+          description: Opponent deleted; no response body
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Opponent has recorded matches
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: Cannot delete an opponent who has recorded matches
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/matches:
+    get:
+      tags: [Matches]
+      summary: List matches
+      description: |
+        Returns matches sorted by playedAt descending.
+        opponentId contains the opponent's ID and name.
+      responses:
+        "200":
+          description: Match list, possibly empty
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PopulatedMatch"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Matches]
+      summary: Create a match
+      requestBody:
+        $ref: "#/components/requestBodies/MatchInput"
+      responses:
+        "201":
+          description: Match created; opponentId is an ID string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Referenced opponent does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/matches/{id}:
+    parameters:
+      - $ref: "#/components/parameters/ResourceId"
+    get:
+      tags: [Matches]
+      summary: Get a match by ID
+      responses:
+        "200":
+          description: Match found with opponent ID and name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PopulatedMatch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    put:
+      tags: [Matches]
+      summary: Replace a match's editable fields
+      requestBody:
+        $ref: "#/components/requestBodies/MatchInput"
+      responses:
+        "200":
+          description: Match updated; opponentId is an ID string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Match or referenced opponent does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      tags: [Matches]
+      summary: Delete a match
+      responses:
+        "204":
+          description: Match deleted; no response body
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+components:
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      description: MongoDB document ID
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+
+  requestBodies:
+    OpponentInput:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OpponentInput"
+    MatchInput:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MatchInput"
+
+  responses:
+    BadRequest:
+      description: Invalid ID, invalid JSON or invalid request data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Requested resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServerError:
+      description: Unexpected server or database error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            message: Internal server error
+
+  schemas:
+    ObjectId:
+      type: string
+      pattern: "^[0-9a-fA-F]{24}$"
+      example: "507f1f77bcf86cd799439011"
+
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          description: Zod issues included for request validation failures
+          items:
+            type: object
+            additionalProperties: true
+
+    OpponentInput:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage
+          example: John Smith
+        notes:
+          type: string
+          maxLength: 500
+          description: Optional; trimmed before storage
+
+    Opponent:
+      type: object
+      required: [_id, name, createdAt, updatedAt]
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+          description: Mongoose version key
+
+    Frame:
+      type: object
+      additionalProperties: false
+      required: [playerScore, opponentScore]
+      description: Completed frame; the two scores must differ.
+      properties:
+        playerScore:
+          type: integer
+          minimum: 0
+          example: 65
+        opponentScore:
+          type: integer
+          minimum: 0
+          example: 32
+
+    MatchInput:
+      type: object
+      additionalProperties: false
+      required: [opponentId, playedAt, frames, highestBreak]
+      properties:
+        opponentId:
+          $ref: "#/components/schemas/ObjectId"
+        playedAt:
+          type: string
+          format: date-time
+          description: ISO timestamp with Z or a numeric timezone offset
+          example: "2026-10-11T14:00:00Z"
+        frames:
+          type: array
+          minItems: 1
+          maxItems: 35
+          items:
+            $ref: "#/components/schemas/Frame"
+        highestBreak:
+          type: integer
+          minimum: 0
+          maximum: 155
+          description: Must not exceed the player's points in every frame.
+          example: 42
+        notes:
+          type: string
+          maxLength: 500
+          description: Optional; trimmed before storage
+
+    MatchDetails:
+      type: object
+      required: [_id, playedAt, frames, highestBreak, createdAt, updatedAt]
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        playedAt:
+          type: string
+          format: date-time
+        frames:
+          type: array
+          items:
+            $ref: "#/components/schemas/Frame"
+        highestBreak:
+          type: integer
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+          description: Mongoose version key
+
+    Match:
+      allOf:
+        - $ref: "#/components/schemas/MatchDetails"
+        - type: object
+          required: [opponentId]
+          properties:
+            opponentId:
+              $ref: "#/components/schemas/ObjectId"
+
+    PopulatedMatch:
+      allOf:
+        - $ref: "#/components/schemas/MatchDetails"
+        - type: object
+          required: [opponentId]
+          properties:
+            opponentId:
+              type: object
+              nullable: true
+              required: [_id, name]
+              properties:
+                _id:
+                  $ref: "#/components/schemas/ObjectId"
+                name:
+                  type: string
