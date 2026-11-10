@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 
 // Define the TypeScript interfaces for the Match and Frame models
-interface Frame {
+export interface Frame {
   playerScore: number;
   opponentScore: number;
 }
