@@ -17,6 +17,7 @@ const openApiDocument = YAML.parse(
   readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
 );
 
+// Serve the Swagger UI for API documentation
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Mount the routers for opponents and matches

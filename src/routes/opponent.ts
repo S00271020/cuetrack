@@ -51,9 +51,11 @@ opponentsRouter.get("/:id", async (req, res, next) => {
     return;
   }
 
+  // Find the opponent by ID
   try {
     const opponent = await OpponentModel.findById(id);
 
+    // If the opponent is not found, respond with a 404 Not Found status
     if (!opponent) {
       res.status(404).json({
         message: "Opponent not found",

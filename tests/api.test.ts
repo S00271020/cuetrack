@@ -25,6 +25,7 @@ beforeAll(async () => {
   });
 }, 15000);
 
+// Clean up any records created by this test run.
 afterAll(async () => {
   try {
     if (mongoose.connection.readyState === 1) {
@@ -36,7 +37,9 @@ afterAll(async () => {
   }
 }, 15000);
 
+// Test suite for the CueTrack API
 describe("CueTrack API", () => {
+  // Test cases
   it("returns the health response", async () => {
     const response = await request(app).get("/api/health");
 
