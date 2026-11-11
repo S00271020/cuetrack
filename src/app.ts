@@ -2,6 +2,7 @@ import express from "express";
 import type { ErrorRequestHandler } from "express";
 import { opponentsRouter } from "./routes/opponent.js";
 import { matchesRouter } from "./routes/match.js";
+import { statisticsRouter } from "./routes/statistics.js";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
 import { readFileSync } from "node:fs";
@@ -23,6 +24,7 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 // Mount the routers for opponents and matches
 app.use("/api/opponents", opponentsRouter);
 app.use("/api/matches", matchesRouter);
+app.use("/api/statistics", statisticsRouter);
 
 // Health check endpoint
 app.get("/api/health", (_req, res) => {
