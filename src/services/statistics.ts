@@ -31,6 +31,7 @@ export function calculateStatistics(matches: StatisticsMatch[]): Statistics {
     }
   }
 
+  // Calculate the total number of matches played
   const matchesPlayed = matches.length;
   if (matchesPlayed > 0) {
     winPercentage = (wins / matchesPlayed) * 100;
