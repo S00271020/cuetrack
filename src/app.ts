@@ -56,6 +56,7 @@ const errorHandler: ErrorRequestHandler = (
     return;
   }
 
+  // Handle other errors
   console.error("Unhandled API error");
   res.status(500).json({ message: "Internal server error" });
 };

@@ -26,5 +26,5 @@ const opponentSchema = new Schema<Opponent>(
   { timestamps: true },
 );
 
-// Create the Mongoose models for the Opponent and Match schemas
+// Create the Mongoose models for the Opponent schema
 export const OpponentModel = model<Opponent>("Opponent", opponentSchema);
